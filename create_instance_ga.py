@@ -27,12 +27,17 @@ def telegram_send_message(text):
     chat_id = os.environ.get('CHAT_ID')
     requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": chat_id, "text": text})
 
+def disable_workflow():
+    github_token = os.environ.get('GITHUB_TOKEN')
+    requests.put('https://api.github.com/repos/Bodya282010/get_instance_bot/actions/workflows/retry.yml/disable', headers={"Authorization": f"Bearer {github_token}"})
+
 try:
     instance = compute_client.launch_instance(details)
 
     if instance.status == 200:
         print('!!!INSTANCE CREATED!!!')
         telegram_send_message('!!!INSTANCE CREATED!!!')
+        disable_workflow()
 
 except oci.exceptions.ServiceError as e:
     if 'Out of host capacity' in e.message:
