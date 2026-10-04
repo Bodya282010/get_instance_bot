@@ -32,4 +32,6 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CRONJOB_API_KEY: ${{ secrets.CRONJOB_API_KEY }}
+          CRONJOB_JOBID: ${{ secrets.CRONJOB_JOBID }}
         run: python create_instance_ga.py
