@@ -31,6 +31,11 @@ def disable_workflow():
     github_token = os.environ.get('GITHUB_TOKEN')
     requests.put('https://api.github.com/repos/Bodya282010/get_instance_bot/actions/workflows/retry.yml/disable', headers={"Authorization": f"Bearer {github_token}"})
 
+def disable_cronjob():
+    cronjob_api_key = os.environ.get('CRONJOB_API_KEY')
+    cronjob_jobid = os.environ.get('CRONJOB_JOBID')
+    requests.patch(f'https://api.cron-job.org/jobs/{cronjob_jobid}', headers={"Authorization": f"Bearer {cronjob_api_key}"}, json={"job": {"enabled": False}})
+
 try:
     instance = compute_client.launch_instance(details)
 
@@ -38,6 +43,7 @@ try:
         print('!!!INSTANCE CREATED!!!')
         telegram_send_message('!!!INSTANCE CREATED!!!')
         disable_workflow()
+        disable_cronjob()
 
 except oci.exceptions.ServiceError as e:
     if 'Out of host capacity' in e.message:
