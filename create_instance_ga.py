@@ -1,4 +1,4 @@
-import oci, os, requests
+import oci, os, requests, base64, json, time
 
 config = {
     "user": os.environ.get('OCI_USER'),
@@ -21,6 +21,13 @@ metadata = {"ssh_authorized_keys": ssh_key}
 display_name = 'REMOVED_NAME'
 
 details = oci.core.models.LaunchInstanceDetails(compartment_id=compartment_id, availability_domain=availability_domain, shape=shape, shape_config=shape_config, source_details=source_details, create_vnic_details=create_vnic_details, metadata=metadata, display_name=display_name)
+
+def get_last_run():
+    github_token = os.environ.get('GITHUB_TOKEN')
+    response = requests.get('https://api.github.com/repos/Bodya282010/get_instance_bot/contents/last_run.json', headers = {"Authorization": f"Bearer {github_token}"})
+    timestamp = json.loads(base64.b64decode(response.json()["content"]).decode('utf-8'))["timestamp"]
+    sha = base64.b64decode(response.json()["sha"]).decode('utf-8')
+    return timestamp, sha
 
 def telegram_send_message(text):
     bot_token = os.environ.get('BOT_TOKEN')
