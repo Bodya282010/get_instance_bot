@@ -25,8 +25,9 @@ details = oci.core.models.LaunchInstanceDetails(compartment_id=compartment_id, a
 def get_last_run():
     github_token = os.environ.get('GITHUB_TOKEN')
     response = requests.get('https://api.github.com/repos/Bodya282010/get_instance_bot/contents/last_run.json', headers = {"Authorization": f"Bearer {github_token}"})
+    response.raise_for_status()
     timestamp = json.loads(base64.b64decode(response.json()["content"]).decode('utf-8'))["timestamp"]
-    sha = base64.b64decode(response.json()["sha"]).decode('utf-8')
+    sha = response.json()["sha"]
     return timestamp, sha
 
 def telegram_send_message(text):
@@ -44,6 +45,8 @@ def disable_cronjob():
     requests.patch(f'https://api.cron-job.org/jobs/{cronjob_jobid}', headers={"Authorization": f"Bearer {cronjob_api_key}"}, json={"job": {"enabled": False}})
 
 try:
+    timestamp, sha = get_last_run()
+    
     instance = compute_client.launch_instance(details)
 
     if instance.status == 200:
@@ -51,6 +54,10 @@ try:
         telegram_send_message('!!!INSTANCE CREATED!!!')
         disable_workflow()
         disable_cronjob()
+
+except requests.exceptions.RequestException:
+    print('!!!ERROR!!!\n')
+    telegram_send_message('!!!ERROR!!!')
 
 except oci.exceptions.ServiceError as e:
     if 'Out of host capacity' in e.message:
