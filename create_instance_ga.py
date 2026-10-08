@@ -30,6 +30,18 @@ def get_last_run():
     sha = response.json()["sha"]
     return timestamp, sha
 
+def update_last_run(sha):
+    github_token = os.environ.get('GITHUB_TOKEN')
+    
+    raw_dict = {"timestamp": time.time()}
+    dict_str = json.dumps(raw_dict)
+    dict_bytes = dict_str.encode('utf-8')
+    dictb64 = base64.b64encode(dict_bytes)
+    dictb64_str = dictb64.decode('utf-8')
+
+    response = requests.put('https://api.github.com/repos/Bodya282010/get_instance_bot/contents/last_run.json', json={"message": "updating_last_run_time", "content": dictb64_str, "sha": sha}, headers={"Authorization": f"Bearer {github_token}"})
+    response.raise_for_status()
+
 def telegram_send_message(text):
     bot_token = os.environ.get('BOT_TOKEN')
     chat_id = os.environ.get('CHAT_ID')
@@ -47,26 +59,37 @@ def disable_cronjob():
 try:
     timestamp, sha = get_last_run()
     
-    instance = compute_client.launch_instance(details)
+    if time.time() - timestamp >= 270:
+        update_last_run(sha)
+        instance = compute_client.launch_instance(details)
 
-    if instance.status == 200:
-        print('!!!INSTANCE CREATED!!!')
-        telegram_send_message('!!!INSTANCE CREATED!!!')
-        disable_workflow()
-        disable_cronjob()
+        if instance.status == 200:
+            print('!!!INSTANCE CREATED!!!')
+            telegram_send_message('!!!INSTANCE CREATED!!!')
+            disable_workflow()
+            disable_cronjob()
 
-except requests.exceptions.RequestException:
-    print('!!!ERROR!!!\n')
+    else:
+        print('!!!TOO EARLY REQUEST!!!')
+
+except requests.exceptions.HTTPError as e:
+    if e.response.status_code == 409:
+        print('!!!FILE IS ALREADY CHANGED!!!', e.response.text)
+    else:
+        print('!!!ERROR!!!', e.response.status_code, e.response.text)
+        telegram_send_message('!!!ERROR!!!')
+
+except requests.exceptions.RequestException as e:
+    print('!!!ERROR!!!', e)
     telegram_send_message('!!!ERROR!!!')
 
 except oci.exceptions.ServiceError as e:
     if 'Out of host capacity' in e.message:
         print('!!!NO PLACE!!!')
     else:
-        print('!!!ERROR!!!\n', e.status, e.code, e.message)
+        print('!!!ERROR!!!', e.status, e.code, e.message)
         telegram_send_message('!!!ERROR!!!')
 
 except Exception as e:
-    print('!!!ERROR!!!\n', e)
+    print('!!!ERROR!!!', e)
     telegram_send_message('!!!ERROR!!!')
-    
