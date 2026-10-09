@@ -14,7 +14,7 @@ compartment_id = os.environ.get('OCI_TENANCY')
 availability_domain = 'REMOVED_AD'
 shape = 'REMOVED_SHAPE'
 shape_config = oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=REMOVED, memory_in_gbs=REMOVED)
-source_details = oci.core.models.InstanceSourceViaImageDetails(image_id='REMOVED_OCID')
+source_details = oci.core.models.InstanceSourceViaImageDetails(image_id='REMOVED_OCID', boot_volume_size_in_gbs=REMOVED)
 create_vnic_details = oci.core.models.CreateVnicDetails(subnet_id='REMOVED_OCID', assign_public_ip=True)
 ssh_key = os.environ.get('SSH_PUBLIC_KEY')
 metadata = {"ssh_authorized_keys": ssh_key}
