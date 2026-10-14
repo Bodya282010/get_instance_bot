@@ -14,7 +14,7 @@ compartment_id = os.environ.get('OCI_TENANCY')
 availability_domain = os.environ.get('AVAILABILITY_DOMAIN')
 shape = os.environ.get('SHAPE')
 shape_config = oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=float(os.environ.get('SHAPE_CONFIG_OCPUS')), memory_in_gbs=float(os.environ.get('SHAPE_CONFIG_MEMORY_IN_GBS')))
-source_details = oci.core.models.InstanceSourceViaImageDetails(image_id=os.environ.get('SOURCE_DETAILS_IMAGE_ID'), boot_volume_size_in_gbs=float(os.environ.get('SOURCE_DETAILS_BOOT_VOLUME_SIZE_IN_GBS')))
+source_details = oci.core.models.InstanceSourceViaImageDetails(image_id=os.environ.get('SOURCE_DETAILS_IMAGE_ID'), boot_volume_size_in_gbs=int(os.environ.get('SOURCE_DETAILS_BOOT_VOLUME_SIZE_IN_GBS')))
 create_vnic_details = oci.core.models.CreateVnicDetails(subnet_id=os.environ.get('CREATE_VNIC_DETAILS_SUBNET_ID'), assign_public_ip=True)
 ssh_key = os.environ.get('SSH_PUBLIC_KEY')
 metadata = {"ssh_authorized_keys": ssh_key}
