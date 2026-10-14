@@ -11,14 +11,14 @@ config = {
 compute_client = oci.core.ComputeClient(config)
 
 compartment_id = os.environ.get('OCI_TENANCY')
-availability_domain = 'REMOVED_AD'
-shape = 'REMOVED_SHAPE'
-shape_config = oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=REMOVED, memory_in_gbs=REMOVED)
-source_details = oci.core.models.InstanceSourceViaImageDetails(image_id='REMOVED_OCID', boot_volume_size_in_gbs=REMOVED)
-create_vnic_details = oci.core.models.CreateVnicDetails(subnet_id='REMOVED_OCID', assign_public_ip=True)
+availability_domain = os.environ.get('AVAILABILITY_DOMAIN')
+shape = os.environ.get('SHAPE')
+shape_config = oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=os.environ.get('SHAPE_CONFIG_OCPUS'), memory_in_gbs=os.environ.get('SHAPE_CONFIG_MEMORY_IN_GBS'))
+source_details = oci.core.models.InstanceSourceViaImageDetails(image_id=os.environ.get('SOURCE_DETAILS_IMAGE_ID'), boot_volume_size_in_gbs=os.environ.get('SOURCE_DETAILS_BOOT_VOLUME_SIZE_IN_GBS'))
+create_vnic_details = oci.core.models.CreateVnicDetails(subnet_id=os.environ.get('CREATE_VNIC_DETAILS_SUBNET_ID'), assign_public_ip=True)
 ssh_key = os.environ.get('SSH_PUBLIC_KEY')
 metadata = {"ssh_authorized_keys": ssh_key}
-display_name = 'REMOVED_NAME'
+display_name = os.environ.get('DISPLAY_NAME')
 
 details = oci.core.models.LaunchInstanceDetails(compartment_id=compartment_id, availability_domain=availability_domain, shape=shape, shape_config=shape_config, source_details=source_details, create_vnic_details=create_vnic_details, metadata=metadata, display_name=display_name)
 

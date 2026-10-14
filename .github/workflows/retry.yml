@@ -34,4 +34,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CRONJOB_API_KEY: ${{ secrets.CRONJOB_API_KEY }}
           CRONJOB_JOBID: ${{ secrets.CRONJOB_JOBID }}
+          AVAILABILITY_DOMAIN: ${{ vars.AVAILABILITY_DOMAIN }}
+          CREATE_VNIC_DETAILS_SUBNET_ID: ${{ vars.CREATE_VNIC_DETAILS_SUBNET_ID }}
+          DISPLAY_NAME: ${{ vars.DISPLAY_NAME }}
+          SHAPE: ${{ vars.SHAPE }}
+          SHAPE_CONFIG_MEMORY_IN_GBS: ${{ vars.SHAPE_CONFIG_MEMORY_IN_GBS }}
+          SHAPE_CONFIG_OCPUS: ${{ vars.SOURCE_DETAILS_BOOT_VOLUME_SIZE_IN_GBS }}
+          SOURCE_DETAILS_BOOT_VOLUME_SIZE_IN_GBS: ${{ vars.SOURCE_DETAILS_BOOT_VOLUME_SIZE_IN_GBS }}
+          SOURCE_DETAILS_IMAGE_ID: ${{ vars.SOURCE_DETAILS_IMAGE_ID }}
         run: python create_instance_ga.py
