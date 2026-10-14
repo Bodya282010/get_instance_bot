@@ -9,7 +9,6 @@ config = {
 }
 
 compute_client = oci.core.ComputeClient(config)
-
 compartment_id = os.environ.get('OCI_TENANCY')
 availability_domain = os.environ.get('AVAILABILITY_DOMAIN')
 shape = os.environ.get('SHAPE')
@@ -20,7 +19,6 @@ ssh_key = os.environ.get('SSH_PUBLIC_KEY')
 metadata = {"ssh_authorized_keys": ssh_key}
 display_name = os.environ.get('DISPLAY_NAME')
 
-details = oci.core.models.LaunchInstanceDetails(compartment_id=compartment_id, availability_domain=availability_domain, shape=shape, shape_config=shape_config, source_details=source_details, create_vnic_details=create_vnic_details, metadata=metadata, display_name=display_name)
 
 def get_last_run():
     github_token = os.environ.get('GITHUB_TOKEN')
@@ -56,7 +54,10 @@ def disable_cronjob():
     cronjob_jobid = os.environ.get('CRONJOB_JOBID')
     requests.patch(f'https://api.cron-job.org/jobs/{cronjob_jobid}', headers={"Authorization": f"Bearer {cronjob_api_key}"}, json={"job": {"enabled": False}})
 
+
 try:
+    details = oci.core.models.LaunchInstanceDetails(compartment_id=compartment_id, availability_domain=availability_domain, shape=shape, shape_config=shape_config, source_details=source_details, create_vnic_details=create_vnic_details, metadata=metadata, display_name=display_name)
+    
     timestamp, sha = get_last_run()
     
     if time.time() - timestamp >= 270:
