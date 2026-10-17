@@ -43,16 +43,19 @@ def update_last_run(sha):
 def telegram_send_message(text):
     bot_token = os.environ.get('BOT_TOKEN')
     chat_id = os.environ.get('CHAT_ID')
-    requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": chat_id, "text": text})
+    response = requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", data={"chat_id": chat_id, "text": text})
+    response.raise_for_status()
 
 def disable_workflow():
     github_token = os.environ.get('GITHUB_TOKEN')
-    requests.put('https://api.github.com/repos/Bodya282010/get_instance_bot/actions/workflows/retry.yml/disable', headers={"Authorization": f"Bearer {github_token}"})
+    response = requests.put('https://api.github.com/repos/Bodya282010/get_instance_bot/actions/workflows/retry.yml/disable', headers={"Authorization": f"Bearer {github_token}"})
+    response.raise_for_status()
 
 def disable_cronjob():
     cronjob_api_key = os.environ.get('CRONJOB_API_KEY')
     cronjob_jobid = os.environ.get('CRONJOB_JOBID')
-    requests.patch(f'https://api.cron-job.org/jobs/{cronjob_jobid}', headers={"Authorization": f"Bearer {cronjob_api_key}"}, json={"job": {"enabled": False}})
+    response = requests.patch(f'https://api.cron-job.org/jobs/{cronjob_jobid}', headers={"Authorization": f"Bearer {cronjob_api_key}"}, json={"job": {"enabled": False}})
+    response.raise_for_status()
 
 
 try:
@@ -66,9 +69,9 @@ try:
 
         if instance.status == 200:
             print('!!!INSTANCE CREATED!!!')
-            telegram_send_message('!!!INSTANCE CREATED!!!')
             disable_workflow()
             disable_cronjob()
+            telegram_send_message('!!!INSTANCE CREATED!!!')
 
     else:
         print('!!!TOO EARLY REQUEST!!!')
