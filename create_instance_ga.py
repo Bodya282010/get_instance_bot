@@ -62,19 +62,19 @@ try:
     details = oci.core.models.LaunchInstanceDetails(compartment_id=compartment_id, availability_domain=availability_domain, shape=shape, shape_config=shape_config, source_details=source_details, create_vnic_details=create_vnic_details, metadata=metadata, display_name=display_name)
     
     timestamp, sha = get_last_run()
+    time_from_last_run = time.time() - timestamp
     
-    if time.time() - timestamp >= 270:
+    if time_from_last_run >= 270:
         update_last_run(sha)
-        instance = compute_client.launch_instance(details)
+        compute_client.launch_instance(details)
 
-        if instance.status == 200:
-            print('!!!INSTANCE CREATED!!!')
-            disable_workflow()
-            disable_cronjob()
-            telegram_send_message('!!!INSTANCE CREATED!!!')
+        print('!!!INSTANCE CREATED!!!')
+        disable_workflow()
+        disable_cronjob()
+        telegram_send_message('!!!INSTANCE CREATED!!!')
 
     else:
-        print('!!!TOO EARLY REQUEST!!!')
+        print('!!!TOO EARLY REQUEST!!!', round(time_from_last_run, 1))
 
 except requests.exceptions.HTTPError as e:
     if e.response.status_code == 409:
