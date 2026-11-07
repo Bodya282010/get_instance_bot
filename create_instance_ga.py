@@ -1,5 +1,7 @@
 import oci, os, requests, base64, json, time
 
+MIN_INTERVAL = 120
+
 config = {
     "user": os.environ.get('OCI_USER'),
     "tenancy": os.environ.get('OCI_TENANCY'),
@@ -64,7 +66,7 @@ try:
     timestamp, sha = get_last_run()
     time_from_last_run = time.time() - timestamp
     
-    if time_from_last_run >= 270:
+    if time_from_last_run >= MIN_INTERVAL:
         update_last_run(sha)
         compute_client.launch_instance(details)
 
